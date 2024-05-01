@@ -45,7 +45,7 @@ env:
   UPLOAD_FIRMWARE: true
   UPLOAD_RELEASE: true
   TZ: Asia/Shanghai
-  TAG_NAME: MR-12
+  TAG_NAME: MR12u
 
 jobs:
   build:
@@ -149,7 +149,7 @@ jobs:
         cp openwrt/bin/targets/*/*/*-sysupgrade.bin output
         cp openwrt/bin/targets/*/*/*-factory.bin output
         cd output
-        echo "FIRMWARE_mr12=$PWD" >> $GITHUB_ENV
+        echo "FIRMWARE_mr12u=$PWD" >> $GITHUB_ENV
         cd ../
         cd openwrt/bin/targets/*/*
         rm -rf packages
@@ -198,7 +198,7 @@ jobs:
       with:
         tag_name: ${{ steps.tag.outputs.release_tag }}
         body_path: release.txt
-        files: ${{ env.FIRMWARE_mr12 }}/*
+        files: ${{ env.FIRMWARE_mr12u }}/*
 
     - name: Delete workflow runs
       uses: GitRML/delete-workflow-runs@main
