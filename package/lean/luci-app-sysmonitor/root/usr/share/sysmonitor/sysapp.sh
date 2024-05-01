@@ -537,17 +537,17 @@ esac
 }
 
 firstrun(){
-	killall ttyd
+	[ -n "$(pgrep -f ttyd)" ] && killall ttyd
 	/usr/bin/ttyd /bin/login &
-	sed -i /re_sysmonitor/d /etc/crontabs/root
-	#echo "* * * * * /usr/share/sysmonitor/sysapp.sh re_sysmonitor" >> /etc/crontabs/root
-	#crontab /etc/crontabs/root
 	#[ "$(ps |grep -v grep|grep cron|wc -l)" == 0 ] && /etc/init.d/cron start
 	[ ! -n "$(pgrep -f cron)" ] && /etc/init.d/cron start
+	#sed -i /re_sysmonitor/d /etc/crontabs/root
+	#echo "* * * * * /usr/share/sysmonitor/sysapp.sh re_sysmonitor" >> /etc/crontabs/root
+	#crontab /etc/crontabs/root
 	ifup lan
 	wifi reload
 	samba
-	echo '55-/usr/share/sysmonitor/sysapp.sh re_sysmonitor' >> /tmp/delay.sign
+	echo '60-/usr/share/sysmonitor/sysapp.sh re_sysmonitor' >> /tmp/delay.sign
 }
 
 [ "$(cat /tmp/sysmonitor.pid)" == 0 ] && re_sysmonitor
