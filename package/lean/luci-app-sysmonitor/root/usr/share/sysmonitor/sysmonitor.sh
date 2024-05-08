@@ -162,7 +162,6 @@ while [ "1" == "1" ]; do #死循环
 		for i in $prog
 		do
 			progsh=$i'.sh'	
-			#if [ "$(ps |grep -v grep|grep $progsh|wc -l)" == 0 ]; then
 			if [ ! -n "$(pgrep -f $progsh)" ]; then
 				progrun='/tmp/'$i'.run'
 				[ -f $progrun ] && rm $progrun

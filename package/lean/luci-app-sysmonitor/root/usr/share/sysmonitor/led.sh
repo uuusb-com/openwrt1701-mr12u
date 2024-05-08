@@ -61,6 +61,16 @@ case $sw1 in
 esac
 num=0
 while [ "1" == "1" ]; do
+	prog='sysmonitor'
+	for i in $prog
+	do
+		progsh=$i'.sh'	
+		if [ ! -n "$(pgrep -f $progsh)" ]; then
+			progrun='/tmp/'$i'.run'
+			[ -f $progrun ] && rm $progrun
+			$APP_PATH/$progsh &
+		fi
+	done
 	if [ -f /tmp/delay.sign ]; then 
 		cat /tmp/delay.sign >> /tmp/delay.list
 		rm /tmp/delay.sign
