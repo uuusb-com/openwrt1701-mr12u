@@ -539,11 +539,7 @@ esac
 firstrun(){
 	[ -n "$(pgrep -f ttyd)" ] && killall ttyd
 	/usr/bin/ttyd /bin/login &
-	#[ "$(ps |grep -v grep|grep cron|wc -l)" == 0 ] && /etc/init.d/cron start
 	[ ! -n "$(pgrep -f cron)" ] && /etc/init.d/cron start
-	#sed -i /re_sysmonitor/d /etc/crontabs/root
-	#echo "* * * * * /usr/share/sysmonitor/sysapp.sh re_sysmonitor" >> /etc/crontabs/root
-	#crontab /etc/crontabs/root
 	ifup lan
 	wifi reload
 	samba
@@ -562,9 +558,9 @@ sysbutton)
 re_sysmonitor)
 	re_sysmonitor
 	[ "$(iw dev|grep channel|wc -l)" == 0 ] && wifi reload
-	[ -f /tmp/delay.tmp ] && sed -i '/re_sysmonitor/d' /tmp/delay.tmp
-	[ -f /tmp/delay.list ] && sed -i '/re_sysmonitor/d' /tmp/delay.list
-	echo '55-/usr/share/sysmonitor/sysapp.sh re_sysmonitor' >> /tmp/delay.sign
+#	[ -f /tmp/delay.tmp ] && sed -i '/re_sysmonitor/d' /tmp/delay.tmp
+#	[ -f /tmp/delay.list ] && sed -i '/re_sysmonitor/d' /tmp/delay.list
+#	echo '55-/usr/share/sysmonitor/sysapp.sh re_sysmonitor' >> /tmp/delay.sign
 	;;
 setdns)
 	setdns
