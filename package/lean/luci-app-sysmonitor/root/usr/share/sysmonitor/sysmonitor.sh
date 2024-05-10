@@ -166,14 +166,10 @@ while [ "1" == "1" ]; do #死循环
 				$APP_PATH/$progsh &
 			fi
 		done
-		#[ "$(ps |grep lighttpd|grep -v grep|wc -l)" == 0 ] && {
+		[ -n "$(pgrep -f lighttpd)" ] && [ ! -n "$(pgrep -f uhttpd)" ] && /etc/init.d/uhttpd start
 		[ ! -n "$(pgrep -f lighttpd)" ] && {
 			/etc/init.d/uhttpd stop
-			#/etc/init.d/lighttpd start
-			#/etc/init.d/uhttpd start
-			echo '1-/etc/init.d/lighttpd start' >> /tmp/delay.sign
-			echo '2-/etc/init.d/uhttpd start' >> /tmp/delay.sign
-
+			/etc/init.d/lighttpd start
 			}
 		if [ -f /tmp/network.sign ]; then
 			rm /tmp/network.sign

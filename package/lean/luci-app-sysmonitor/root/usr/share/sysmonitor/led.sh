@@ -71,30 +71,31 @@ while [ "1" == "1" ]; do
 			$APP_PATH/$progsh &
 		fi
 	done
-	if [ -f /tmp/delay.sign ]; then 
-		cat /tmp/delay.sign >> /tmp/delay.list
+		if [ -f /tmp/delay.sign ]; then
+		while read i
+		do
+			prog=$(echo $i|cut -d'=' -f2)
+			[ -n $(echo $prog|cut -d' ' -f2) ] && prog=$(echo $prog|cut -d' ' -f2)
+			sed -i "/$prog/d" /tmp/delay.list
+			echo $i >> /tmp/delay.list
+		done < /tmp/delay.sign
 		rm /tmp/delay.sign
 	fi
 	if [ -f /tmp/delay.list ]; then
 		touch /tmp/delay.tmp
 		while read line
 		do
-   			num=$(echo $line|cut -d'-' -f1)
-			prog=$(echo $line|cut -d'-' -f2-)
-			if [ "$num" != 0 ];  then
+   			num=$(echo $line|cut -d'=' -f1)
+			prog=$(echo $line|cut -d'=' -f2-)
+			if [ "$num" -gt 0 ];  then
 				num=$((num-1))
-				tmp=$num'-'$prog
+				tmp=$num'='$prog
 				echo $tmp >> /tmp/delay.tmp
 			else
-				$prog
+			[ "$num" == 0 ] && $prog &
 			fi
 		done < /tmp/delay.list
-		if [ -n "$(cat /tmp/delay.tmp)" ]; then
-			mv /tmp/delay.tmp /tmp/delay.list
-		else
-			rm /tmp/delay.tmp
-			rm /tmp/delay.list
-		fi	
+		mv /tmp/delay.tmp /tmp/delay.list	
 	fi
 	if [ -f /tmp/ledonoff.sign ]; then
 		led=$(uci_get_by_name $NAME $NAME led 1)
