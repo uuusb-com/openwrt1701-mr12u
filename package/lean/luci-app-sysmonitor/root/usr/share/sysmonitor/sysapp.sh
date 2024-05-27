@@ -543,6 +543,8 @@ firstrun(){
 	ifup lan
 	wifi reload
 	samba
+	sed -i 's_downloads.lede-project.org_mirrors.cloud.tencent.com/openwrt_' /etc/opkg/distfeeds.conf
+	sed -i "s/-SNAPSHOT/.7/g" /etc/opkg/distfeeds.conf
 }
 
 [ "$(cat /tmp/sysmonitor.pid)" == 0 ] && re_sysmonitor
