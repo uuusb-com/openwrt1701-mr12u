@@ -156,7 +156,8 @@ while [ "1" == "1" ]; do #死循环
 			;;
 	esac
 	num=0
-	while [ $num -le 10 ]; do
+	check_time=$(uci_get_by_name $NAME $NAME systime 10)
+	while [ $num -le $check_time ]; do
 		prog='led'
 		for i in $prog
 		do
@@ -199,6 +200,7 @@ while [ "1" == "1" ]; do #死循环
 			rm /tmp/samba.sign
 			break
 		fi
+		[ "$(iw dev|grep channel|wc -l)" == 0 ] && wifi reload
 		let num=num+sleep_unit
 		if [ -f "/tmp/sysmonitor" ]; then
 			rm /tmp/sysmonitor
