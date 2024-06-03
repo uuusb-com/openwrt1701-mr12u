@@ -111,7 +111,7 @@ syspid=$(cat /tmp/sysmonitor.pid)
 let syspid=syspid+1
 echo $syspid > /tmp/sysmonitor.pid
 sysnetwork=1
-while [ "1" == "1" ]; do #死循环
+while [ "1" == "1" ]; do
 	ifname='br-wan'
 	ip=$(ip -o -4 addr list $ifname | cut -d ' ' -f7|cut -d'/' -f1)
 	if [ -n "$ip" ]; then
