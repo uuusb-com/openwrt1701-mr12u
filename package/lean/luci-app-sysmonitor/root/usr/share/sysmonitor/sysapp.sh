@@ -383,39 +383,6 @@ setdns() {
 	fi
 }
 
-re_sysmonitor() {
-arg=$(cat /tmp/sysmonitor.pid)
-case $arg in
-	0)
-		#[ "$(ps |grep -v grep|grep sysmonitor.sh|wc -l)" != 0 ] && arg=2
-		[ -n "$(pgrep -f sysmonitor.sh)" ] && arg=2
-		;;
-	*)
-		#[ "$(ps |grep -v grep|grep sysmonitor.sh|wc -l)" == 0 ] && arg=0
-		[ ! -n "$(pgrep -f sysmonitor.sh)" ] && arg=0
-		;;
-esac
-case $arg in
-	0)
-		[ -f /tmp/sysmonitor.run ] && rm -rf /tmp/sysmonitor.run
-		echo 0 > /tmp/sysmonitor.pid
-		/usr/share/sysmonitor/monitor.sh
-	;;
-	1)
-		echo "Update sysmonitor."
-		touch /tmp/sysmonitor
-	;;
-	*)
-		echo "Killed sysmonitor & restart it!"
-		echolog "sysmonitor is killed & start!"
-		killall sysmonitor.sh
-		[ -f /tmp/sysmonitor.run ] && rm /tmp/sysmonitor.run
-		echo 0 > /tmp/sysmonitor.pid
-		/usr/share/sysmonitor/monitor.sh
-	;;
-esac
-}
-
 gethost() {
 	if [ -n "$1" ]; then
 		hostip=$1		
@@ -556,13 +523,6 @@ sysmenu)
 	;;
 sysbutton)
 	sysbutton $1
-	;;	
-re_sysmonitor)
-	re_sysmonitor
-	[ "$(iw dev|grep channel|wc -l)" == 0 ] && wifi reload
-#	[ -f /tmp/delay.tmp ] && sed -i '/re_sysmonitor/d' /tmp/delay.tmp
-#	[ -f /tmp/delay.list ] && sed -i '/re_sysmonitor/d' /tmp/delay.list
-#	echo '55=/usr/share/sysmonitor/sysapp.sh re_sysmonitor' >> /tmp/delay.sign
 	;;
 setdns)
 	setdns
