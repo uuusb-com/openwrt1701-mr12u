@@ -1,6 +1,9 @@
 #!/bin/sh
 
 [ -f /tmp/led.run ] && exit
+[ ! -f /tmp/led.pid ] && echo 0 >/tmp/led.pid
+[ "$(cat /tmp/led.pid)" != 0 ] && exit
+
 touch /tmp/led.run
 NAME=sysmonitor
 APP_PATH=/usr/share/$NAME
@@ -26,9 +29,17 @@ uci_set_by_name() {
 
 sys_exit() {
 	[ -f /tmp/led.run ] && rm -rf /tmp/led.run
+	syspid=$(cat /tmp/led.pid)
+	syspid=$((syspid-1))
+	echo $syspid > /tmp/led.pid
+
 	exit 0
 }
 echolog "led control is up."
+syspid=$(cat /tmp/led.pid)
+syspid=$((syspid+1))
+echo $syspid > /tmp/led.pid
+
 sw1=$(cat /sys/kernel/debug/gpio|grep sw1|sed 's/in//g'|sed 's/[[:space:]]//g'|cut -d')' -f2)
 sw2=$(cat /sys/kernel/debug/gpio|grep sw2|sed 's/in//g'|sed 's/[[:space:]]//g'|cut -d')' -f2)
 case $sw1 in
@@ -64,14 +75,28 @@ while [ "1" == "1" ]; do
 	prog='sysmonitor'
 	for i in $prog
 	do
-		progsh=$i'.sh'	
-		if [ ! -n "$(pgrep -f $progsh)" ]; then
-			progrun='/tmp/'$i'.run'
-			[ -f $progrun ] && rm $progrun
-			$APP_PATH/$progsh &
-		fi
+		progsh=$i'.sh'
+		progpid='/tmp/'$i'.pid'
+		[ "$(pgrep -f $progsh|wc -l)" == 0 ] && echo 0 > $progpid
+		[ ! -f $progpid ] && echo 0 > $progpid
+		arg=$(cat $progpid)
+		case $arg in
+			0)
+				[ "$(pgrep -f $progsh|wc -l)" != 0 ] && killall $progsh
+				progrun='/tmp/'$i'.run'
+				[ -f $progrun ] && rm $progrun
+				[ -f $progpid ] && rm $progpid
+				$APP_PATH/$progsh &
+				;;
+			1)
+				;;
+			*)
+				killall $progsh
+				echo 0 > $progpid
+				;;
+		esac	
 	done
-		if [ -f /tmp/delay.sign ]; then
+	if [ -f /tmp/delay.sign ]; then
 		while read i
 		do
 			prog=$(echo $i|cut -d'=' -f2)
@@ -138,6 +163,7 @@ while [ "1" == "1" ]; do
 	esac
 	fi
 	[ ! -f /tmp/led.run ] && sys_exit
+	[ "$(cat /tmp/led.pid)" -gt 1 ] && sys_exit
 	sleep 1
 	num=$((num+1))
 done

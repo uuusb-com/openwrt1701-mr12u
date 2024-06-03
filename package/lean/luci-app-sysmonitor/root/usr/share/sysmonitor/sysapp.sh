@@ -547,7 +547,7 @@ firstrun(){
 	sed -i "s/-SNAPSHOT/.7/g" /etc/opkg/distfeeds.conf
 }
 
-[ "$(cat /tmp/sysmonitor.pid)" == 0 ] && re_sysmonitor
+[ "$(cat /tmp/sysmonitor.pid)" == 0 ] && $APP_PATH/monitor.sh
 arg1=$1
 shift
 case $arg1 in

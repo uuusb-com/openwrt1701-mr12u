@@ -1,6 +1,7 @@
 #!/bin/sh
 
 [ -f /tmp/sysmonitor.run ] && exit
+[ ! -f /tmp/sysmonitor.pid ] && echo 0 >/tmp/sysmonitor.pid
 [ "$(cat /tmp/sysmonitor.pid)" != 0 ] && exit
 
 sleep_unit=1
@@ -159,12 +160,26 @@ while [ "1" == "1" ]; do #死循环
 		prog='led'
 		for i in $prog
 		do
-			progsh=$i'.sh'	
-			if [ ! -n "$(pgrep -f $progsh)" ]; then
-				progrun='/tmp/'$i'.run'
-				[ -f $progrun ] && rm $progrun
-				$APP_PATH/$progsh &
-			fi
+			progsh=$i'.sh'
+			progpid='/tmp/'$i'.pid'
+			[ "$(pgrep -f $progsh|wc -l)" == 0 ] && echo 0 > $progpid
+			[ ! -f $progpid ] && echo 0 > $progpid
+			arg=$(cat $progpid)
+			case $arg in
+				0)
+					[ "$(pgrep -f $progsh|wc -l)" != 0 ] && killall $progsh
+					progrun='/tmp/'$i'.run'
+					[ -f $progrun ] && rm $progrun
+					[ -f $progpid ] && rm $progpid
+					$APP_PATH/$progsh &
+					;;
+				1)
+					;;
+				*)
+					killall $progsh
+					echo 0 > $progpid
+					;;
+			esac	
 		done
 		[ -n "$(pgrep -f lighttpd)" ] && [ ! -n "$(pgrep -f uhttpd)" ] && /etc/init.d/uhttpd start
 		[ ! -n "$(pgrep -f lighttpd)" ] && {
