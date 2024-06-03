@@ -564,6 +564,7 @@ firstrun)
 	firstrun
 	;;
 *)
-	echo "error function call"
+	echo "No <"$arg1"> function call"
 	;;
 esac
+exit
