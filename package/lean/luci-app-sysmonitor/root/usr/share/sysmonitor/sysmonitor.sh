@@ -182,6 +182,7 @@ while [ "1" == "1" ]; do
 					;;
 			esac	
 		done
+		[ "$(iw dev|grep channel|wc -l)" == 0 ] && wifi reload
 		[ -n "$(pgrep -f lighttpd)" ] && [ ! -n "$(pgrep -f uhttpd)" ] && /etc/init.d/uhttpd start
 		[ ! -n "$(pgrep -f lighttpd)" ] && {
 			/etc/init.d/uhttpd stop
@@ -200,7 +201,6 @@ while [ "1" == "1" ]; do
 			rm /tmp/samba.sign
 			break
 		fi
-		[ "$(iw dev|grep channel|wc -l)" == 0 ] && wifi reload
 		let num=num+sleep_unit
 		if [ -f "/tmp/sysmonitor" ]; then
 			rm /tmp/sysmonitor
