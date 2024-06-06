@@ -157,7 +157,9 @@ while [ "1" == "1" ]; do
 	esac
 	num=0
 	check_time=$(uci_get_by_name $NAME $NAME systime 10)
+	chktime=$((check_time-1))
 	while [ $num -le $check_time ]; do
+		touch /tmp/test.$NAME
 		prog='led'
 		for i in $prog
 		do
@@ -175,6 +177,13 @@ while [ "1" == "1" ]; do
 					$APP_PATH/$progsh &
 					;;
 				1)
+					if [ "$num" == $chktime ]; then
+						if [ ! -f /tmp/test.$i ]; then	
+							killall $progsh
+						else
+							rm /tmp/test.$i
+						fi
+					fi
 					;;
 				*)
 					killall $progsh

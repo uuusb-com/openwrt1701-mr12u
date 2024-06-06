@@ -70,8 +70,10 @@ case $sw1 in
 		esac
 		;;
 esac
-num=0
+chknum=0
 while [ "1" == "1" ]; do
+	chknum=$((chknum+1))
+	touch /tmp/test.led
 	prog='sysmonitor'
 	for i in $prog
 	do
@@ -89,6 +91,14 @@ while [ "1" == "1" ]; do
 				$APP_PATH/$progsh &
 				;;
 			1)
+				if [ "$chknum" == 60 ]; then
+					chknum=0
+					if [ ! -f /tmp/test.$i ]; then	
+						killall $progsh
+					else
+						rm /tmp/test.$i	
+					fi
+				fi
 				;;
 			*)
 				killall $progsh
@@ -165,5 +175,4 @@ while [ "1" == "1" ]; do
 	[ ! -f /tmp/led.run ] && sys_exit
 	[ "$(cat /tmp/led.pid)" -gt 1 ] && sys_exit
 	sleep 1
-	num=$((num+1))
 done
