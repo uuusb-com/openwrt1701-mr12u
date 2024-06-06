@@ -8,7 +8,7 @@ config vsftpd 'local'
 	option local_enable '1'
 	option write '0'
 	option download '1'
-	option root '/home/username'
+	option root '/mnt'
 	option umask '022'
 	option mode '0755'
 
