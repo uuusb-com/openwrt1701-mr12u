@@ -73,7 +73,7 @@ esac
 chknum=0
 while [ "1" == "1" ]; do
 	chknum=$((chknum+1))
-	touch /tmp/test.led
+	[ ! -f /tmp/test.led ] && touch /tmp/test.led
 	prog='sysmonitor'
 	for i in $prog
 	do

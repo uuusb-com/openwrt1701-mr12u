@@ -159,7 +159,7 @@ while [ "1" == "1" ]; do
 	check_time=$(uci_get_by_name $NAME $NAME systime 10)
 	chktime=$((check_time-1))
 	while [ $num -le $check_time ]; do
-		touch /tmp/test.$NAME
+		[ ! -f /tmp/test.$NAME ] && touch /tmp/test.$NAME
 		prog='led'
 		for i in $prog
 		do
