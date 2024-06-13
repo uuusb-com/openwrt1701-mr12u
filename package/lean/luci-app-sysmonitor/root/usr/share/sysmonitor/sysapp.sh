@@ -400,7 +400,7 @@ sysbutton() {
 		proto='Set dhcp'
 		ip=$(getip)
 		[ "$(uci get network.wan.proto)" == 'dhcp' ] && proto='Set static'
-		result='<button class=button1><a href="http://'$ip':7681"  target="_blank">Terminal</a></button> <button class="button1"><a href="/cgi-bin/luci/admin/sys/sysmonitor/sys?sys=wanswitch">'$proto'</a></button>'
+		result='<button class="button1"><a href="/cgi-bin/luci/admin/sys/sysmonitor/sys?sys=wanswitch">'$proto'</a></button>'
 		;;
 	wan)
 		ip=$(getip)
