@@ -71,6 +71,7 @@ case $sw1 in
 		;;
 esac
 chknum=0
+chksys=0
 while [ "1" == "1" ]; do
 	chknum=$((chknum+1))
 	[ ! -f /tmp/test.led ] && touch /tmp/test.led
@@ -93,6 +94,7 @@ while [ "1" == "1" ]; do
 			1)
 				if [ "$chknum" == 60 ]; then
 					chknum=0
+					chksys=0
 					if [ ! -f /tmp/test.$i ]; then	
 						killall $progsh
 					else
@@ -101,8 +103,11 @@ while [ "1" == "1" ]; do
 				fi
 				;;
 			*)
-				killall $progsh
-				echo 0 > $progpid
+				chksys=$((chksys+1))
+				if [ "$chksys" -ge 120 ]; then
+					killall $progsh
+					echo 0 > $progpid
+				fi
 				;;
 		esac	
 	done
