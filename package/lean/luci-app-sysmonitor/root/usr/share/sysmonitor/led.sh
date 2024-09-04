@@ -85,16 +85,26 @@ while [ "1" == "1" ]; do
 		arg=$(cat $progpid)
 		case $arg in
 			0)
-				[ "$(pgrep -f $progsh|wc -l)" != 0 ] && killall $progsh
-				progrun='/tmp/'$i'.run'
-				[ -f $progrun ] && rm $progrun
-				[ -f $progpid ] && rm $progpid
-				$APP_PATH/$progsh &
+				pid_arg=$(pgrep -f $progsh|wc -l)
+				if [ "$pid_arg" == 0 ]; then
+					chksys=0
+					chknum=0	
+					progrun='/tmp/'$i'.run'
+					[ -f $progrun ] && rm $progrun
+					[ -f $progpid ] && rm $progpid
+					$APP_PATH/$progsh &	
+				elif [ "$pid_arg" == 1 ]; then
+					echo $pid_arg > $progpid
+				else
+					echolog "Sysmonitor.pid=0."
+					killall $progsh
+				fi
 				;;
 			1)
-				if [ "$chknum" == 60 ]; then
+				chksys=0
+				check_test=$(uci_get_by_name $NAME $NAME chktest 60)
+				if [ "$chknum" -ge $chk_test ]; then
 					chknum=0
-					chksys=0
 					if [ ! -f /tmp/test.$i ]; then	
 						killall $progsh
 					else
@@ -104,9 +114,11 @@ while [ "1" == "1" ]; do
 				;;
 			*)
 				chksys=$((chksys+1))
-				if [ "$chksys" -ge 120 ]; then
+				check_sys=$(uci_get_by_name $NAME $NAME chksys 180)
+				if [ "$chksys" -ge $check_sys ]; then
 					killall $progsh
 					echo 0 > $progpid
+					chksys=0
 				fi
 				;;
 		esac	

@@ -512,9 +512,9 @@ firstrun(){
 	samba
 	sed -i 's_downloads.lede-project.org_mirrors.cloud.tencent.com/openwrt_' /etc/opkg/distfeeds.conf
 	sed -i "s/-SNAPSHOT/.7/g" /etc/opkg/distfeeds.conf
+	[ "$(pgrep -f sysmonitor.sh|wc -l)" == 0 ] && $APP_PATH/monitor.sh
 }
 
-[ "$(cat /tmp/sysmonitor.pid)" == 0 ] && $APP_PATH/monitor.sh
 arg1=$1
 shift
 case $arg1 in
