@@ -12,13 +12,13 @@ APP_PATH=/usr/share/$NAME
 
 stop()
 {
-	set sysmonitor.sysmonitor.enable=0
-	set commit sysmonitor
+	uci set sysmonitor.sysmonitor.enable=0
+	uci commit sysmonitor
 }
 start()
 {
-	set sysmonitor.sysmonitor.enable=1
-	set commit sysmonitor
+	uci set sysmonitor.sysmonitor.enable=1
+	uci commit sysmonitor
 	[ "$(pgrep -f sysmonitor.sh|wc -l)" == 0 ] && $APP_PATH/monitor.sh
 }
 
